@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'Job.dart';
 import 'allPost.dart';
+import 'candidatedetails.dart' show Candidate, CandidateDetailPage, CandidateListPage;
 import 'contactpage.dart';
 import 'detailpage.dart';
+import 'home.dart';
 
 void main() => runApp(MyApp());
 
@@ -74,7 +76,6 @@ final List<Job> jobs = [
 ];
 
 class JobListPage extends StatelessWidget {
-
   final String title;
 
   JobListPage({Key? key, required this.title}) : super(key: key);
@@ -101,9 +102,9 @@ class JobListPage extends StatelessWidget {
                     child: Text(
                       "Jobs",
                       style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold
+                        fontSize: 20,
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
@@ -116,7 +117,7 @@ class JobListPage extends StatelessWidget {
                     child: GestureDetector(
                       onTap: () {
                         Navigator.push(
-                            context,
+                          context,
                           Fade(
                             builder: (context) => postApp(),
                           ),
@@ -136,6 +137,35 @@ class JobListPage extends StatelessWidget {
             child: ListView(
               children: jobs.map((job) => JobDetailCard(job: job)).toList(),
             ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CandidateListPage(title: 'Candidates'),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white, backgroundColor: Colors.blue, // Text color
+                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), // Button padding
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8), // Button border radius
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.person), // Icon
+                  SizedBox(width: 8), // Space between icon and text
+                  Text('Candidate Details'), // Text
+                ],
+              ),
+            ),
+
           ),
         ],
       ),
@@ -176,7 +206,7 @@ class JobDetailCard extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 'Title: ${job.title}',
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
               ),
               const SizedBox(height: 8),
               Text(
@@ -194,16 +224,22 @@ class JobDetailCard extends StatelessWidget {
                 style: const TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    CustomPageRoute(
-                      builder: (context) => ApplyNowPage(job: job, id: job.id),
-                    ),
-                  );
-                },
-                child: const Text('Apply Now'),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ApplyNowPage(job: job, id: job.id),
+                        ),
+                      );
+                    },
+                    child: const Text('Apply Now'),
+                  ),
+                ],
               ),
             ],
           ),
@@ -212,10 +248,6 @@ class JobDetailCard extends StatelessWidget {
     );
   }
 }
-
-
-
-
 
 class CustomPageRoute<T> extends PageRouteBuilder<T> {
   final WidgetBuilder builder;
@@ -236,6 +268,3 @@ class CustomPageRoute<T> extends PageRouteBuilder<T> {
     },
   );
 }
-
-
-

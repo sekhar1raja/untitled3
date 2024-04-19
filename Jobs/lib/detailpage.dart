@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-
 import 'Job.dart';
 import 'contactpage.dart';
-import 'main.dart';
+
 class JobDetailPage extends StatelessWidget {
   final Job job;
 
