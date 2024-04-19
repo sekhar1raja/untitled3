@@ -1,189 +1,203 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'Job.dart';
 
+class CreatePostScreen extends StatefulWidget {
+  const CreatePostScreen({Key? key}) : super(key: key);
 
-enum PostType { JobListing, GeneralPost }
+  @override
+  State<CreatePostScreen> createState() => _CreatePostScreenState();
+}
 
-class Post {
+class Feed {
   final String title;
-  final String location;
-  final double salary;
   final String description;
-  final String imagePath;
-  final PostType type;
+  final String candidateId;
 
-  Post({
+  Feed({
     required this.title,
-    required this.location,
-    required this.salary,
     required this.description,
-    required this.imagePath,
-    required this.type,
+    required this.candidateId,
   });
 }
 
-class PostForm extends StatefulWidget {
-  final Function(Post) onFormSubmit;
-
-  PostForm({Key? key, required this.onFormSubmit}) : super(key: key);
-
-  @override
-  _PostFormState createState() => _PostFormState();
-}
-
-class _PostFormState extends State<PostForm> {
+class _CreatePostScreenState extends State<CreatePostScreen> {
+  int selectedOption = 0;
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _titleController = TextEditingController();
-  TextEditingController _locationController = TextEditingController();
-  TextEditingController _salaryController = TextEditingController();
-  TextEditingController _descriptionController = TextEditingController();
-  TextEditingController _imagePathController = TextEditingController();
+  final Map<String, dynamic> _formData = {};
 
-  PostType _selectedPostType = PostType.JobListing;
+  void saveForm(BuildContext context) {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      if (selectedOption == 0) {
+        // Add job to the list
+        Job newJob = Job(
+          title: _formData['title'],
+          location: _formData['location'],
+          description: _formData['description'],
+          photo: _formData['photo'],
+          salary: _formData['salary'],
+          id: '', // Assuming you have a field to store the ID of the job
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Added Job")),
+        );
+        Navigator.pop(context, newJob); // Pass newJob back to the previous screen
+      } else {
+        // Add feed to the list
+        Feed newFeed = Feed(
+          title: _formData['title'],
+          description: _formData['description'],
+          candidateId: '1',
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Added Feed")),
+        );
+        Navigator.pop(context, newFeed); // Pass newFeed back to the previous screen
+      }
+    }
+  }
+
+  void switchCategory(int? value) {
+    setState(() {
+      selectedOption = value!;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Post Form'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      appBar: AppBar(title: const Text('Create Post')),
+      body: SingleChildScrollView(
         child: Form(
           key: _formKey,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              DropdownButtonFormField<PostType>(
-                value: _selectedPostType,
-                onChanged: (PostType? value) {
-                  setState(() {
-                    _selectedPostType = value!;
-                  });
-                },
-                items: PostType.values.map((type) {
-                  return DropdownMenuItem<PostType>(
-                    value: type,
-                    child: Text(type == PostType.JobListing ? 'Job Listing' : 'General Post'),
-                  );
-                }).toList(),
-                decoration: InputDecoration(
-                  labelText: 'Select Post Type',
-                ),
-              ),
-              SizedBox(height: 16),
-              TextFormField(
-                controller: _titleController,
-                decoration: InputDecoration(
-                  labelText: 'Title',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a title';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 16),
-              TextFormField(
-                controller: _locationController,
-                decoration: InputDecoration(
-                  labelText: 'Location',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a location';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 16),
-              if (_selectedPostType == PostType.JobListing)
-                TextFormField(
-                  controller: _salaryController,
-                  decoration: InputDecoration(
-                    labelText: 'Salary',
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    children: [
+                      Radio<int>(
+                        value: 0,
+                        groupValue: selectedOption,
+                        onChanged: switchCategory,
+                      ),
+                      const Text("Job")
+                    ],
                   ),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a salary';
-                    }
-                    return null;
-                  },
-                ),
-              SizedBox(height: 16),
-              TextFormField(
-                controller: _descriptionController,
-                decoration: InputDecoration(
-                  labelText: 'Description',
-                ),
-                maxLines: null,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a description';
-                  }
-                  return null;
-                },
+                  const SizedBox(width: 80),
+                  Row(
+                    children: [
+                      Radio<int>(
+                        value: 1,
+                        groupValue: selectedOption,
+                        onChanged: switchCategory,
+                      ),
+                      const Text("Post")
+                    ],
+                  )
+                ],
               ),
-              SizedBox(height: 16),
-              TextFormField(
-                controller: _imagePathController,
-                decoration: InputDecoration(
-                  labelText: 'Image Path',
+              if (selectedOption == 0) ...[
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Title',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) =>
+                    value!.isEmpty ? 'Please enter a title' : null,
+                    onSaved: (newValue) => _formData['title'] = newValue,
+                  ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an image path';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Location',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) =>
+                    value!.isEmpty ? 'Please enter a location' : null,
+                    onSaved: (newValue) => _formData['location'] = newValue,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Description',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) => value!.isEmpty
+                        ? 'Please enter a description'
+                        : null,
+                    onSaved: (newValue) =>
+                    _formData['description'] = newValue,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Photo URL',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) =>
+                    value!.isEmpty ? 'Please enter a photo URL' : null,
+                    onSaved: (newValue) => _formData['photo'] = newValue,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Salary',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                    validator: (value) =>
+                    value!.isEmpty ? 'Please enter a salary' : null,
+                    onSaved: (newValue) =>
+                    _formData['salary'] = double.parse(newValue!),
+                  ),
+                ),
+              ],
+              if (selectedOption == 1) ...[
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Title',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) =>
+                    value!.isEmpty ? 'Please enter a title' : null,
+                    onSaved: (newValue) => _formData['title'] = newValue,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Description',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) => value!.isEmpty
+                        ? 'Please enter a description'
+                        : null,
+                    onSaved: (newValue) =>
+                    _formData['description'] = newValue,
+                  ),
+                ),
+              ],
               ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    String title = _titleController.text;
-                    String location = _locationController.text;
-                    double salary = _selectedPostType == PostType.JobListing ? double.parse(_salaryController.text) : 0.0;
-                    String description = _descriptionController.text;
-                    String imagePath = _imagePathController.text;
-
-                    Post newPost = Post(
-                      title: title,
-                      location: location,
-                      salary: salary,
-                      description: description,
-                      imagePath: imagePath,
-                      type: _selectedPostType,
-                    );
-
-                    // Save the form data using shared preferences
-                    SharedPreferences prefs = await SharedPreferences.getInstance();
-                    await prefs.setString('title', title);
-                    await prefs.setString('location', location);
-                    await prefs.setDouble('salary', salary);
-                    await prefs.setString('description', description);
-                    await prefs.setString('imagePath', imagePath);
-                    await prefs.setInt('postType', _selectedPostType.index);
-
-                    // Call the onFormSubmit function provided by the parent widget
-                    widget.onFormSubmit(newPost);
-
-                    // Clear the form fields
-                    _titleController.clear();
-                    _locationController.clear();
-                    _salaryController.clear();
-                    _descriptionController.clear();
-                    _imagePathController.clear();
-
-                    // Navigate back to the previous screen
-                    Navigator.pop(context);
-                  }
-                },
-                child: Text('Submit'),
+                onPressed: () => saveForm(context), // Pass context to saveForm
+                child: const Text('ADD'),
               ),
-              // Image widget...
+              const SizedBox(height: 20),
             ],
           ),
         ),

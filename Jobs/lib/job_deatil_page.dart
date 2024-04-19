@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'Job.dart';
-import 'contactpage.dart';
+import 'contactpage.dart'; // Import the Job class
+
 class JobDetailPage extends StatelessWidget {
   final Job job;
 
@@ -53,21 +54,8 @@ class JobDetailPage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) => ApplyNowPage(job: job, id: job.id),
-                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                      const begin = Offset(1.0, 0.0);
-                      const end = Offset.zero;
-                      const curve = Curves.ease;
-
-                      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                      var offsetAnimation = animation.drive(tween);
-
-                      return SlideTransition(
-                        position: offsetAnimation,
-                        child: child,
-                      );
-                    },
+                  MaterialPageRoute(
+                    builder: (context) => ApplyNowPage(job: job, id: job.id),
                   ),
                 );
               },

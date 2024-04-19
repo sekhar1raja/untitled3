@@ -64,16 +64,4 @@ flutter {
     source '../..'
 }
 
-dependencies {
-    implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
-    implementation("com.google.firebase:firebase-analytics")
-}
-
-plugins {
-    // ...
-    id("com.android.application")
-    id("com.google.gms.google-services")
-    // Add the dependency for the Google services Gradle plugin
-
-
-}
+dependencies {}

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'Job.dart';
-import 'main.dart';
 
 class ApplyNowPage extends StatelessWidget {
   final Job job;
@@ -12,6 +11,9 @@ class ApplyNowPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+    String? firstName;
+    String? lastName;
+    String? email;
 
     return Scaffold(
       appBar: AppBar(
@@ -44,6 +46,9 @@ class ApplyNowPage extends StatelessWidget {
                     }
                     return null;
                   },
+                  onSaved: (value) {
+                    firstName = value;
+                  },
                   decoration: InputDecoration(
                     labelText: 'First Name',
                     labelStyle: const TextStyle(color: Colors.blueGrey),
@@ -55,11 +60,13 @@ class ApplyNowPage extends StatelessWidget {
                 const SizedBox(height: 10),
                 TextFormField(
                   validator: (value) {
-                    // Add validation logic for last name
                     if (value == null || value.isEmpty) {
                       return 'Please enter your last name';
                     }
                     return null;
+                  },
+                  onSaved: (value) {
+                    lastName = value;
                   },
                   decoration: InputDecoration(
                     labelText: 'Last Name',
@@ -70,10 +77,8 @@ class ApplyNowPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10),
-                // Repeat the same for other form fields
                 TextFormField(
                   validator: (value) {
-                    // Add validation logic for email
                     if (value == null || value.isEmpty) {
                       return 'Please enter your email';
                     } else if (!value.contains('@')) {
@@ -81,41 +86,11 @@ class ApplyNowPage extends StatelessWidget {
                     }
                     return null;
                   },
+                  onSaved: (value) {
+                    email = value;
+                  },
                   decoration: InputDecoration(
                     labelText: 'Email',
-                    labelStyle: const TextStyle(color: Colors.blueGrey),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                TextFormField(
-                  // Add validation logic for city/province
-                  decoration: InputDecoration(
-                    labelText: 'City, Province/Territory(optional)',
-                    labelStyle: const TextStyle(color: Colors.blueGrey),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                TextFormField(
-                  // Add validation logic for country
-                  decoration: InputDecoration(
-                    labelText: 'Country(optional)',
-                    labelStyle: const TextStyle(color: Colors.blueGrey),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                TextFormField(
-                  // Add validation logic for phone number
-                  decoration: InputDecoration(
-                    labelText: 'Phone number(optional)',
                     labelStyle: const TextStyle(color: Colors.blueGrey),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
@@ -126,13 +101,25 @@ class ApplyNowPage extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      // Form is valid, process the data
-                      jobs.removeWhere((job) => job.id == id);
-                      Navigator.push(
-                        context,
-                        CustomPageRoute(
-                          builder: (context) => MyApp(),
-                        ),
+                      _formKey.currentState!.save();
+                      // Process the data and show popup
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Application Submitted'),
+                            content: Text(
+                                'Thank you, $firstName $lastName! Your application for ${job.title} has been submitted.'),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
                       );
                     }
                   },

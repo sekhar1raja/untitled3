@@ -1,22 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+import 'Job.dart';
+import 'allPost.dart';
+import 'candidatedetails.dart'; // Assuming CandidateListPage is defined in candidatedetails.dart
+import 'job_deatil_page.dart';
 
-// Import other necessary files
-import 'Job.dart'; // Assuming you have this file
-import 'package:untitled3/allPost.dart';
-import 'candidatedetails.dart' show Candidate, CandidateDetailPage, CandidateListPage; // Assuming you have this file
-import 'contactpage.dart'; // Assuming you have this file
-import 'detailpage.dart'; // Assuming you have this file
-import 'home.dart'; // Assuming you have this file
+void main() => runApp(const MyApp());
 
-void main() => runApp(MyApp());
 
-final List<Job> jobs = [
-  // Define your list of jobs here
-];
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,323 +19,277 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
       ),
-      home: HomeScreen(
-        jobPosts: jobs, // Pass job posts to HomeScreen
+      home: ChangeNotifierProvider(
+        create: (context) => Data(),
+        child: const HomeScreen(),
       ),
     );
   }
 }
-
-
-
+class Data extends ChangeNotifier {
+  List<dynamic> posts = [];
+}
+final List<Job> jobs = [
+  Job(
+    id: '1',
+    title: 'Software Engineer',
+    location: 'San Francisco, CA',
+    description: 'Experienced software engineer needed for developing cutting-edge applications.',
+    photo: 'assets/soft.jpg',
+    salary: 100000,
+  ), Job(
+    id: '2',
+    title: 'Graphic Designer',
+    location: 'New York, NY',
+    description: 'Creative graphic designer needed for designing captivating visual content.',
+    photo: 'assets/gra.jpg',
+    salary: 80000,
+  ),
+  Job(
+    id: '3',
+    title: 'Marketing Specialist',
+    location: 'Chicago, IL',
+    description: 'Skilled marketing specialist needed for planning and executing marketing campaigns.',
+    photo: 'assets/market.jpg',
+    salary: 75000,
+  ),
+  Job(
+    id: '4',
+    title: 'Data Analyst',
+    location: 'Los Angeles, CA',
+    description: 'Analytical data analyst needed for interpreting complex datasets and providing insights.',
+    photo: 'assets/dt.jpg',
+    salary: 85000,
+  ),
+  Job(
+    id: '5',
+    title: 'UX/UI Designer',
+    location: 'Seattle, WA',
+    description: 'Talented UX/UI designer needed for creating intuitive and user-friendly interfaces.',
+    photo: 'assets/ui.png',
+    salary: 90000,
+  ),
+  Job(
+    id: '6',
+    title: 'Project Manager',
+    location: 'Austin, TX',
+    description: 'Organized project manager needed for overseeing project timelines and deliverables.',
+    photo: 'assets/prg.jpg',
+    salary: 95000,
+  ), // Add other jobs here...
+];
 class HomeScreen extends StatefulWidget {
-  final List<Job> jobPosts;
-
-  const HomeScreen({Key? key, required this.jobPosts}) : super(key: key);
+  const HomeScreen({Key? key});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<Post> generalPosts = [];
 
-  // Function to update generalPosts list
-  @override
-  void initState() {
-    super.initState();
-    _loadStoredData();
-  }
-  Future<void> _loadStoredData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? title = prefs.getString('title');
-    String? location = prefs.getString('location');
-    double? salary = prefs.getDouble('salary');
-    String? description = prefs.getString('description');
-    String? imagePath = prefs.getString('imagePath');
-    int? postTypeIndex = prefs.getInt('postType');
+  int _selectedIndex = 0;
 
-    if (title != null &&
-        location != null &&
-        salary != null &&
-        description != null &&
-        imagePath != null &&
-        postTypeIndex != null) {
-      PostType postType = PostType.values[postTypeIndex];
-      Post storedPost = Post(
-        title: title,
-        location: location,
-        salary: salary,
-        description: description,
-        imagePath: imagePath,
-        type: postType,
-      );
+  static const List<Widget> _widgetOptions = <Widget>[
+    const PostsTab(),
+    CreatePost(),
+    JobDetailsTab(),
+  ];
 
-      setState(() {
-        generalPosts.add(storedPost);
-      });
-    }
-  }
-  // Function to update generalPosts list
-  void addPost(Post post) {
+  void _onItemTapped(int index) {
     setState(() {
-      generalPosts.add(post);
+      _selectedIndex = index;
     });
   }
+
+
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Find Job'),
-          bottom: TabBar(
-            tabs: [
-              Tab(text: 'Jobs'),
-              Tab(text: 'Posts'),
-            ],
-          ),
-          actions: [
-            IconButton(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Find Job'),
+        actions: [
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CandidateListPage(title: ''),
+                ),
+              );
+            },
+            child: IconButton(
               icon: Icon(Icons.person),
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => CandidateListPage(title: 'Candidates'),
+                    builder: (context) => CandidateListPage(title: ''),
                   ),
                 );
               },
             ),
-          ],
-        ),
-        body: TabBarView(
-          children: [
-            JobsTab(jobPosts: widget.jobPosts),
-            PostsTab(generalPosts: generalPosts),
-          ],
-        ),
-        // Pass addPost function to PostForm widget
-
+          ),
+        ],
+      ),
+      body: Center(
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.create),
+            label: 'Create Post',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.work),
+            label: 'Job Details',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
       ),
     );
   }
 }
 
-class PostsTab extends StatelessWidget {
-  final List<Post> generalPosts;
 
-  const PostsTab({Key? key, required this.generalPosts}) : super(key: key);
+class PostsTab extends StatefulWidget {
+  const PostsTab({Key? key}) : super(key: key);
+
+  @override
+  _PostsTabState createState() => _PostsTabState();
+}
+
+class _PostsTabState extends State<PostsTab> {
+  @override
+  Widget build(BuildContext context) {
+    var data = Provider.of<Data>(context);
+    return ListView.builder(
+      itemCount: data.posts.length, // Use data.posts.length instead of posts.length
+      itemBuilder: (context, index) {
+        final post = data.posts[index]; // Access posts from data.posts
+        if (post is Job) {
+          return ListTile(
+            title: Text(post.title),
+            subtitle: Text(post.description),
+          );
+        }
+        return SizedBox.shrink(); // If it's not a Job, just return an empty SizedBox
+      },
+    );
+  }
+}
+
+
+class JobDetailsTab extends StatelessWidget {
+  const JobDetailsTab({Key? key});
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: generalPosts.length,
+      itemCount: jobs.length,
       itemBuilder: (context, index) {
+        final job = jobs[index];
         return ListTile(
-          title: Text(generalPosts[index].title),
-          subtitle: Text(generalPosts[index].description),
+          title: Text(job.title),
 
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => JobDetailPage(job: job),
+              ),
+            );
+          },
         );
       },
     );
   }
 }
-class JobsTab extends StatelessWidget {
-  final List<Job> jobPosts;
 
-  const JobsTab({Key? key, required this.jobPosts}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: jobPosts.length,
-      itemBuilder: (context, index) {
-        return JobDetailCard(job: jobPosts[index]);
-      },
-    );
-  }
-}
-
-class JobDetailCard extends StatelessWidget {
-  final Job job;
-
-  const JobDetailCard({Key? key, required this.job}) : super(key: key);
+class CreatePost extends StatelessWidget {
+  const CreatePost({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.all(8.0),
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => JobDetailPage(job: job),
-            ),
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 200,
-                child: Image.asset(
-                  job.photo,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Title: ${job.title}',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Location: ${job.location}',
-                style: TextStyle(fontSize: 16),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Salary: \$${job.salary.toString()}',
-                style: TextStyle(fontSize: 16),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Description: ${job.description}',
-                style: TextStyle(fontSize: 16),
-              ),
-              SizedBox(height: 16),
-            ],
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CreatePostScreen(),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-
-
-class CreatePostScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Create Post'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            DropdownButton<String>(
-              items: [
-                DropdownMenuItem(
-                  child: Text('Job Listing'),
-                  value: 'job',
-                ),
-                DropdownMenuItem(
-                  child: Text('Post'),
-                  value: 'post',
-                ),
-              ],
-              onChanged: (String? value) {
-                // Handle dropdown value change
-              },
-            ),
-            // Add form fields for creating a post or job listing
-          ],
-        ),
-      ),
-    );
-  }
-}
-//
-class JobDetailPage extends StatelessWidget {
-  final Job job;
-
-  const JobDetailPage({Key? key, required this.job}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(job.title),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: 200,
-              child: Image.asset(
-                job.photo,
-                fit: BoxFit.cover,
-              ),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Title: ${job.title}',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Location: ${job.location}',
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Salary: \$${job.salary.toString()}',
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Description: ${job.description}',
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 16),
-            ElevatedButton(
+        );
+      },
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Image.asset(
+            'assets/job1.jpg', // Replace with your image path
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+          ),
+          Positioned(
+            bottom: 40,
+            child: ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ApplyNowPage(job: job, id: job.id),
+                    builder: (context) => CreatePostScreen(),
                   ),
                 );
               },
-              child: Text('Apply Now'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              ),
+              child: Text(
+                'Create Post',
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.white,
+                ),
+              ),
             ),
-          ],
-        ),
+          ),
+          Positioned(
+            top: 20,
+            left: 20,
+            child: Text(
+              'Create Your Post',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
 
-// Other widget classes such as ApplyNowPage, JobDetailPage, etc.
-
-class CustomPageRoute<T> extends PageRouteBuilder<T> {
-  final WidgetBuilder builder;
-
-  CustomPageRoute({required this.builder})
-      : super(
-    pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
-      return builder(context);
-    },
-    transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
-      return SlideTransition(
-        position: Tween<Offset>(
-          begin: const Offset(1.0, 0.0),
-          end: Offset.zero,
-        ).animate(animation),
-        child: child,
-      );
-    },
-  );
+class CandidateDetailScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Candidate Detail'),
+      ),
+      body: Center(
+        child: Text(
+          'Candidate Detail Screen',
+          style: TextStyle(fontSize: 24),
+        ),
+      ),
+    );
+  }
 }
-
-// Other widget classes such as PostApp, ApplyNowPage, etc.
