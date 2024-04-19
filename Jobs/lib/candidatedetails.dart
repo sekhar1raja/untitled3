@@ -1,8 +1,7 @@
-
-// Add the necessary imports for TabBar and TabBarView
 import 'package:flutter/material.dart';
-
+import 'Job.dart';
 import 'allPost.dart';
+
 
 void main() {
   runApp(MyApp());
@@ -119,35 +118,37 @@ class CandidateListPage extends StatelessWidget {
             // Add views for each tab
             ListView(
               children: candidates
-                  .map((candidate) => CandidateCard(candidate: candidate))
+                  .map((candidate) => CandidateCard(candidate: candidate, onPostsUpdated: (jobPosts, generalPosts) {}))
                   .toList(),
             ),
+
             // Add views for other categories
             ListView(
               children: candidates
                   .where((candidate) => candidate.category == 'UI/UX Design')
-                  .map((candidate) => CandidateCard(candidate: candidate))
+                  .map((candidate) => CandidateCard(candidate: candidate, onPostsUpdated: (jobPosts, generalPosts) {}))
                   .toList(),
             ),
             ListView(
               children: candidates
                   .where((candidate) => candidate.category == 'Software Developer')
-                  .map((candidate) => CandidateCard(candidate: candidate))
+                  .map((candidate) => CandidateCard(candidate: candidate, onPostsUpdated: (jobPosts, generalPosts) {}))
                   .toList(),
             ),
             // Add views for other categories
-          ],// Add views for other categories
-
+          ],
         ),
       ),
     );
   }
 }
 
+
 class CandidateCard extends StatelessWidget {
   final Candidate candidate;
+  final Function(List<Post>, List<Post>) onPostsUpdated; // Define the callback function here
 
-  const CandidateCard({Key? key, required this.candidate}) : super(key: key);
+  const CandidateCard({Key? key, required this.candidate, required this.onPostsUpdated}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -158,7 +159,7 @@ class CandidateCard extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => CandidateDetailPage(candidate: candidate),
+              builder: (context) => CandidateDetailPage(candidate: candidate, onPostsUpdated: onPostsUpdated), // Pass the callback function here
             ),
           );
         },
@@ -213,10 +214,12 @@ class CandidateCard extends StatelessWidget {
 }
 
 
+
 class CandidateDetailPage extends StatefulWidget {
   final Candidate candidate;
+  final Function(List<Post>, List<Post>) onPostsUpdated;
 
-  const CandidateDetailPage({Key? key, required this.candidate}) : super(key: key);
+  const CandidateDetailPage({Key? key, required this.candidate, required this.onPostsUpdated}) : super(key: key);
 
   @override
   _CandidateDetailPageState createState() => _CandidateDetailPageState();
@@ -226,6 +229,7 @@ class CandidateDetailPage extends StatefulWidget {
 
 class _CandidateDetailPageState extends State<CandidateDetailPage> {
   bool connected = false;
+
 
   @override
   Widget build(BuildContext context) {
@@ -318,17 +322,27 @@ class _CandidateDetailPageState extends State<CandidateDetailPage> {
             ),
             ElevatedButton.icon(
               onPressed: () {
-                // Navigate to the PostForm screen with candidate-specific details
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PostForm(),
+                    builder: (context) => PostForm(
+                      onFormSubmit: (post) {
+                        setState(() {
+                          if (post.type == PostType.JobListing) {
+                            widget.onPostsUpdated([post], []); // Update home screen with the new post
+                          } else {
+                            widget.onPostsUpdated([], [post]); // Update home screen with the new post
+                          }
+                        });
+                      },
+                    ),
                   ),
                 );
               },
-              icon: Icon(Icons.bolt), // Specify the icon here
-              label: Text('Post'), // Text is optional, you can remove it
+              icon: Icon(Icons.bolt),
+              label: Text('Post'),
             ),
+
 
           ],
         ),
@@ -356,3 +370,4 @@ class _CandidateDetailPageState extends State<CandidateDetailPage> {
     }).toList();
   }
 }
+
