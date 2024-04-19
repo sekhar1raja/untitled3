@@ -1,169 +1,161 @@
 import 'package:flutter/material.dart';
 
-import 'main.dart';
-
 class Post {
   final String title;
-  final String content;
+  final String location;
+  final double salary;
+  final String description;
   final String imagePath;
 
-  Post({required this.title, required this.content, required this.imagePath});
+  Post({
+    required this.title,
+    required this.location,
+    required this.salary,
+    required this.description,
+    required this.imagePath,
+  });
 }
 
-List<Post> posts = [
-  Post(imagePath: "assets/job1.jpg", title: 'Grace', content: 'This is the content of Post 1'),
-  Post(imagePath: "assets/job1.jpg", title: 'Grace', content: 'This is the content of Post 2'),
-  Post(imagePath: "assets/job1.jpg", title: 'Grace', content: 'This is the content of Post 3'),
-  Post(imagePath: "assets/job1.jpg", title: 'Grace', content: 'This is the content of Post 3'),
-  Post(imagePath: "assets/job1.jpg", title: 'Grace', content: 'This is the content of Post 3'),
-  Post(imagePath: "assets/job1.jpg", title: 'Grace', content: 'This is the content of Post 3'),
-  Post(imagePath: "assets/job1.jpg", title: 'Grace', content: 'This is the content of Post 3'),
-  Post(imagePath: "assets/job1.jpg", title: 'Grace', content: 'This is the content of Post 3'),
-];
+class PostForm extends StatefulWidget {
+  final Post? candidate;
 
-void main() {
-  runApp(postApp());
-}
+  PostForm({Key? key, this.candidate}) : super(key: key);
 
-class postApp extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Feed Screen Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: FeedScreen(),
-    );
-  }
+  _PostFormState createState() => _PostFormState();
 }
 
-class FeedScreen extends StatelessWidget {
+class _PostFormState extends State<PostForm> {
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController _titleController = TextEditingController();
+  TextEditingController _locationController = TextEditingController();
+  TextEditingController _salaryController = TextEditingController();
+  TextEditingController _descriptionController = TextEditingController();
+  TextEditingController _imagePathController = TextEditingController();
+
+  // Define lists to store form data
+  List<String> titles = [];
+  List<String> locations = [];
+  List<double> salaries = [];
+  List<String> descriptions = [];
+  List<String> imagePaths = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title: const Text('Posts', style: TextStyle(color: Colors.white)),
+        title: Text('Post Form'),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: SizedBox(
-                  height: 50,
-                  child: Center(
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            Fade(
-                              builder: (context) => MyApp(),
-                            ),
-                          );
-                        },
-                      child: const Text(
-                        "Jobs",
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    )
-                  ),
-                  ),
+              TextFormField(
+                controller: _titleController,
+                decoration: InputDecoration(
+                  labelText: 'Title',
                 ),
-              const Expanded(
-                child: SizedBox(
-                  height: 50,
-                  child: Center(
-                      child: Text(
-                        "Posts",
-                        style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold
-                        ),
-                      ),
-                  ),
-                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a title';
+                  }
+                  return null;
+                },
               ),
+              SizedBox(height: 16),
+              TextFormField(
+                controller: _locationController,
+                decoration: InputDecoration(
+                  labelText: 'Location',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a location';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 16),
+              TextFormField(
+                controller: _salaryController,
+                decoration: InputDecoration(
+                  labelText: 'Salary',
+                ),
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a salary';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 16),
+              TextFormField(
+                controller: _descriptionController,
+                decoration: InputDecoration(
+                  labelText: 'Description',
+                ),
+                maxLines: null,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a description';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 16),
+              TextFormField(
+                controller: _imagePathController,
+                decoration: InputDecoration(
+                  labelText: 'Image Path',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter an image path';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    String title = _titleController.text;
+                    String location = _locationController.text;
+                    double salary = double.parse(_salaryController.text);
+                    String description = _descriptionController.text;
+                    String imagePath = _imagePathController.text;
+
+                    setState(() {
+                      titles.add(title);
+                      locations.add(location);
+                      salaries.add(salary);
+                      descriptions.add(description);
+                      imagePaths.add(imagePath);
+                    });
+
+                    Navigator.pop(context);
+                  }
+                },
+
+                child: Text('Submit'),
+              ),
+              SizedBox(height: 16),
+              _imagePathController.text.isNotEmpty
+                  ? Image.asset(
+                _imagePathController.text,
+                height: 100,
+                width: 100,
+                fit: BoxFit.cover,
+              )
+                  : SizedBox(),
             ],
           ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: posts.length,
-              itemBuilder: (context, index) {
-                final post = posts[index];
-                return PostCard(post: post);
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-
-class PostCard extends StatelessWidget {
-  final Post post;
-
-  const PostCard({Key? key, required this.post}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.all(8.0),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: CircleAvatar(
-                    radius: 25,
-                    backgroundImage: AssetImage(post.imagePath),
-                  ),
-                ),
-                Text(
-                  post.title,
-                  style: const TextStyle(
-                    fontSize: 17.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8.0),
-            Text(
-              post.content,
-              style: const TextStyle(fontSize: 16.0),
-            ),
-          ],
         ),
       ),
     );
   }
-}
-
-
-
-class Fade<T> extends PageRouteBuilder<T> {
-  final WidgetBuilder builder;
-
-  Fade({required this.builder})
-      : super(
-    pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
-      return builder(context);
-    },
-    transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
-      return FadeTransition(
-        opacity: animation,
-        child: child,
-      );
-    },
-  );
 }

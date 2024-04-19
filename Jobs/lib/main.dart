@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'Job.dart';
-import 'allPost.dart';
-import 'candidatedetails.dart' show Candidate, CandidateDetailPage, CandidateListPage;
-import 'contactpage.dart';
-import 'detailpage.dart';
-import 'home.dart';
+// Import other necessary files
+import 'Job.dart'; // Assuming you have this file
+import 'package:untitled3/allPost.dart';
+import 'candidatedetails.dart' show Candidate, CandidateDetailPage, CandidateListPage; // Assuming you have this file
+import 'contactpage.dart'; // Assuming you have this file
+import 'detailpage.dart'; // Assuming you have this file
+import 'home.dart'; // Assuming you have this file
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -78,16 +80,15 @@ final List<Job> jobs = [
 class JobListPage extends StatelessWidget {
   final String title;
 
-  JobListPage({Key? key, required this.title}) : super(key: key);
+  const JobListPage({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
         title: Text(
           title,
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.black),
         ),
       ),
       body: Column(
@@ -95,7 +96,7 @@ class JobListPage extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: SizedBox(
                   height: 50,
                   child: Center(
@@ -118,12 +119,10 @@ class JobListPage extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          Fade(
-                            builder: (context) => postApp(),
-                          ),
+                          MaterialPageRoute(builder: (context) => PostApp()),
                         );
                       },
-                      child: const Text(
+                      child: Text(
                         "Posts",
                         style: TextStyle(fontSize: 18),
                       ),
@@ -150,24 +149,77 @@ class JobListPage extends StatelessWidget {
                 );
               },
               style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white, backgroundColor: Colors.blue, // Text color
-                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), // Button padding
+                foregroundColor: Colors.white, backgroundColor: Colors.blue,
+                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8), // Button border radius
+                  borderRadius: BorderRadius.circular(8),
                 ),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.person), // Icon
-                  SizedBox(width: 8), // Space between icon and text
-                  Text('Candidate Details'), // Text
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(Icons.person),
+                  SizedBox(width: 8),
+                  Text('Candidate Details'),
                 ],
               ),
             ),
-
           ),
         ],
+      ),
+    );
+  }
+}
+
+class PostApp extends StatefulWidget {
+  @override
+  _PostAppState createState() => _PostAppState();
+}
+
+class _PostAppState extends State<PostApp> {
+  String? title;
+  String? location;
+  double? salary;
+  String? description;
+  String? imagePath;
+
+  @override
+  void initState() {
+    super.initState();
+    // Retrieve data from shared preferences when the widget initializes
+    _loadFormData();
+  }
+
+  // Function to load form data from shared preferences
+  Future<void> _loadFormData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      title = prefs.getString('title');
+      location = prefs.getString('location');
+      salary = prefs.getDouble('salary');
+      description = prefs.getString('description');
+      imagePath = prefs.getString('imagePath');
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Posts'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (title != null) Text('Title: $title'),
+            if (location != null) Text('Location: $location'),
+            if (salary != null) Text('Salary: $salary'),
+            if (description != null) Text('Description: $description'),
+            if (imagePath != null) Text('Image Path: $imagePath'),
+          ],
+        ),
       ),
     );
   }
@@ -186,7 +238,7 @@ class JobDetailCard extends StatelessWidget {
         onTap: () {
           Navigator.push(
             context,
-            CustomPageRoute(
+            MaterialPageRoute(
               builder: (context) => JobDetailPage(job: job),
             ),
           );
@@ -203,28 +255,27 @@ class JobDetailCard extends StatelessWidget {
                   fit: BoxFit.cover,
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               Text(
                 'Title: ${job.title}',
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               Text(
                 'Location: ${job.location}',
-                style: const TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 16),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               Text(
                 'Salary: \$${job.salary.toString()}',
-                style: const TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 16),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               Text(
                 'Description: ${job.description}',
-                style: const TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 16),
               ),
-              const SizedBox(height: 16),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -237,7 +288,7 @@ class JobDetailCard extends StatelessWidget {
                         ),
                       );
                     },
-                    child: const Text('Apply Now'),
+                    child: Text('Apply Now'),
                   ),
                 ],
               ),
@@ -248,7 +299,6 @@ class JobDetailCard extends StatelessWidget {
     );
   }
 }
-
 class CustomPageRoute<T> extends PageRouteBuilder<T> {
   final WidgetBuilder builder;
 
@@ -268,3 +318,5 @@ class CustomPageRoute<T> extends PageRouteBuilder<T> {
     },
   );
 }
+
+// Other widget classes such as PostApp, ApplyNowPage, etc.

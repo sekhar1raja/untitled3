@@ -3,11 +3,6 @@ import 'package:flutter/material.dart';
 class ApplicationConfirmationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Delay navigation to the main page by 6 seconds
-    Future.delayed(Duration(seconds: 6), () {
-      Navigator.pop(context);
-    });
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Application Submitted'),
