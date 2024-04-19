@@ -7,8 +7,6 @@ import 'job_deatil_page.dart';
 
 void main() => runApp(const MyApp());
 
-
-
 class MyApp extends StatelessWidget {
   const MyApp({Key? key});
 
@@ -26,58 +24,140 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
 class Data extends ChangeNotifier {
-  List<dynamic> posts = [];
+  List<dynamic> posts = [
+    Job(
+      id: '7',
+      title: 'Web Developer',
+      location: 'Remote',
+      description: 'Looking for a skilled web developer to join our team.',
+      photo: 'assets/job1.jpg.jpg',
+      salary: 85000,
+    ),
+    Job(
+      id: '8',
+      title: 'Html Developer',
+      location: 'Remote',
+      description: 'Looking for a skilled Frontedn developer to join our team.',
+      photo: 'assets/job1.jpg.jpg',
+      salary: 85000,
+    ),
+
+    Feed(
+      title: 'Lifeguard- job post',
+      description: 'H2O Lifeguard and Recreation Management',
+      candidateId: '2',
+    ),
+    Feed(
+      title: 'Looking for Roommate',
+      description: 'I am looking for a roommate to share my apartment.',
+      candidateId: '3',
+    ),
+
+
+
+  ];
 }
+
 final List<Job> jobs = [
+
   Job(
+
     id: '1',
+
     title: 'Software Engineer',
+
     location: 'San Francisco, CA',
+
     description: 'Experienced software engineer needed for developing cutting-edge applications.',
+
     photo: 'assets/soft.jpg',
+
     salary: 100000,
+
   ), Job(
+
     id: '2',
+
     title: 'Graphic Designer',
+
     location: 'New York, NY',
+
     description: 'Creative graphic designer needed for designing captivating visual content.',
+
     photo: 'assets/gra.jpg',
+
     salary: 80000,
+
   ),
+
   Job(
+
     id: '3',
+
     title: 'Marketing Specialist',
+
     location: 'Chicago, IL',
+
     description: 'Skilled marketing specialist needed for planning and executing marketing campaigns.',
+
     photo: 'assets/market.jpg',
+
     salary: 75000,
+
   ),
+
   Job(
+
     id: '4',
+
     title: 'Data Analyst',
+
     location: 'Los Angeles, CA',
+
     description: 'Analytical data analyst needed for interpreting complex datasets and providing insights.',
+
     photo: 'assets/dt.jpg',
+
     salary: 85000,
+
   ),
+
   Job(
+
     id: '5',
+
     title: 'UX/UI Designer',
+
     location: 'Seattle, WA',
+
     description: 'Talented UX/UI designer needed for creating intuitive and user-friendly interfaces.',
+
     photo: 'assets/ui.png',
+
     salary: 90000,
+
   ),
+
   Job(
+
     id: '6',
+
     title: 'Project Manager',
+
     location: 'Austin, TX',
+
     description: 'Organized project manager needed for overseeing project timelines and deliverables.',
+
     photo: 'assets/prg.jpg',
+
     salary: 95000,
+
   ), // Add other jobs here...
+
 ];
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key});
 
@@ -86,7 +166,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   int _selectedIndex = 0;
 
   static const List<Widget> _widgetOptions = <Widget>[
@@ -100,7 +179,6 @@ class _HomeScreenState extends State<HomeScreen> {
       _selectedIndex = index;
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -156,34 +234,32 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-
-class PostsTab extends StatefulWidget {
+class PostsTab extends StatelessWidget {
   const PostsTab({Key? key}) : super(key: key);
 
-  @override
-  _PostsTabState createState() => _PostsTabState();
-}
-
-class _PostsTabState extends State<PostsTab> {
   @override
   Widget build(BuildContext context) {
     var data = Provider.of<Data>(context);
     return ListView.builder(
-      itemCount: data.posts.length, // Use data.posts.length instead of posts.length
+      itemCount: data.posts.length,
       itemBuilder: (context, index) {
-        final post = data.posts[index]; // Access posts from data.posts
+        final post = data.posts[index];
         if (post is Job) {
           return ListTile(
             title: Text(post.title),
             subtitle: Text(post.description),
           );
+        } else if (post is Feed) {
+          return ListTile(
+            title: Text(post.title),
+            subtitle: Text(post.description),
+          );
         }
-        return SizedBox.shrink(); // If it's not a Job, just return an empty SizedBox
+        return SizedBox.shrink();
       },
     );
   }
 }
-
 
 class JobDetailsTab extends StatelessWidget {
   const JobDetailsTab({Key? key});
@@ -229,7 +305,7 @@ class CreatePost extends StatelessWidget {
         alignment: Alignment.center,
         children: [
           Image.asset(
-            'assets/job1.jpg', // Replace with your image path
+            'assets/job1.jpg',
             fit: BoxFit.cover,
             width: double.infinity,
             height: double.infinity,
@@ -275,7 +351,6 @@ class CreatePost extends StatelessWidget {
     );
   }
 }
-
 
 class CandidateDetailScreen extends StatelessWidget {
   @override

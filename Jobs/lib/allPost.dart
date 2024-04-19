@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'Job.dart';
+import 'main.dart';
 
 class CreatePostScreen extends StatefulWidget {
   const CreatePostScreen({Key? key}) : super(key: key);
@@ -28,6 +30,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   void saveForm(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+      final data = Provider.of<Data>(context, listen: false);
       if (selectedOption == 0) {
         // Add job to the list
         Job newJob = Job(
@@ -41,7 +44,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Added Job")),
         );
-        Navigator.pop(context, newJob); // Pass newJob back to the previous screen
+        data.posts.add(newJob); // Add newJob to the posts list
+        Navigator.pop(context); // Go back to the previous screen
       } else {
         // Add feed to the list
         Feed newFeed = Feed(
@@ -52,10 +56,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Added Feed")),
         );
-        Navigator.pop(context, newFeed); // Pass newFeed back to the previous screen
+        data.posts.add(newFeed); // Add newFeed to the posts list
+        Navigator.pop(context); // Go back to the previous screen
       }
     }
   }
+
 
   void switchCategory(int? value) {
     setState(() {

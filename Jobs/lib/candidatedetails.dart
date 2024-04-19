@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'Job.dart';
+import 'allPost.dart';
+
 void main() {
   runApp(MyApp());
 }
@@ -25,6 +28,7 @@ class Candidate {
   final String salary;
   final String category;
   final List<String> skills;
+  bool isConnected; // New property
 
   Candidate({
     required this.name,
@@ -34,11 +38,49 @@ class Candidate {
     required this.salary,
     required this.category,
     required this.skills,
+    this.isConnected = false, // Default value
   });
 }
+class Data extends ChangeNotifier {
+  List<dynamic> posts = [
+    Job(
+      id: '7',
+      title: 'Web Developer',
+      location: 'Remote',
+      description: 'Looking for a skilled web developer to join our team.',
+      photo: 'assets/job1.jpg.jpg',
+      salary: 85000,
+    ),
+    Job(
+      id: '8',
+      title: 'Html Developer',
+      location: 'Remote',
+      description: 'Looking for a skilled Frontedn developer to join our team.',
+      photo: 'assets/job1.jpg.jpg',
+      salary: 85000,
+    ),
+
+    Feed(
+      title: 'Lifeguard- job post',
+      description: 'H2O Lifeguard and Recreation Management',
+      candidateId: '2',
+    ),
+    Feed(
+      title: 'Looking for Roommate',
+      description: 'I am looking for a roommate to share my apartment.',
+      candidateId: '3',
+    ),
+
+
+
+  ];
+}
+
+
 
 class CandidateListPage extends StatelessWidget {
   final List<Candidate> candidates = [
+
     Candidate(
       name: 'Emma',
       location: 'Chicago, IL',
@@ -84,6 +126,7 @@ class CandidateListPage extends StatelessWidget {
       category: 'Software Developer',
       skills: ['Java', 'Python', 'Flutter'],
     ),
+
   ];
 
   final String title;
@@ -97,19 +140,6 @@ class CandidateListPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(title),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.person),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CandidateDetailPage(candidate: candidates[0]),
-                  ),
-                );
-              },
-            ),
-          ],
           bottom: TabBar(
             tabs: [
               Tab(text: 'All'),
@@ -198,21 +228,25 @@ class CandidateCard extends StatelessWidget {
           ),
         ),
       ),
-
     );
   }
 }
 
-class CandidateDetailPage extends StatelessWidget {
+class CandidateDetailPage extends StatefulWidget {
   final Candidate candidate;
 
   const CandidateDetailPage({required this.candidate});
 
   @override
+  _CandidateDetailPageState createState() => _CandidateDetailPageState();
+}
+
+class _CandidateDetailPageState extends State<CandidateDetailPage> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(candidate.name),
+        title: Text(widget.candidate.name),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
@@ -225,7 +259,7 @@ class CandidateDetailPage extends StatelessWidget {
                 children: [
                   Positioned.fill(
                     child: Image.asset(
-                      candidate.photo,
+                      widget.candidate.photo,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -233,7 +267,7 @@ class CandidateDetailPage extends StatelessWidget {
                     bottom: 10,
                     left: 10,
                     child: Text(
-                      'Location: ${candidate.location}',
+                      'Location: ${widget.candidate.location}',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,
@@ -246,7 +280,7 @@ class CandidateDetailPage extends StatelessWidget {
             ),
             SizedBox(height: 16),
             Text(
-              candidate.description,
+              widget.candidate.description,
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(height: 16),
@@ -256,7 +290,7 @@ class CandidateDetailPage extends StatelessWidget {
             ),
             Wrap(
               spacing: 8,
-              children: candidate.skills.map((skill) {
+              children: widget.candidate.skills.map((skill) {
                 return Chip(
                   label: Text(skill),
                   backgroundColor: Colors.blue,
@@ -265,34 +299,25 @@ class CandidateDetailPage extends StatelessWidget {
               }).toList(),
             ),
             SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                // Toggle the isConnected property
+                setState(() {
+                  widget.candidate.isConnected = !widget.candidate.isConnected;
+                });
+              },
+              child: Text(widget.candidate.isConnected ? 'Disconnect' : 'Connect'),
+            ),
+            SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PostForm(),
-                  ),
-                );
+
               },
               icon: Icon(Icons.bolt),
               label: Text('Post'),
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class PostForm extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Post Form'),
-      ),
-      body: Center(
-        child: Text('Post Form'),
       ),
     );
   }
