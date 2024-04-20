@@ -87,14 +87,14 @@ class Data extends ChangeNotifier {
     ),
     Post(
       username: 'cityexplorer',
-      imagePath: "assets/job7.jpg",
+      imagePath: "assets/job6.jpg",
       title: 'City Skyline',
       content:
       'Took a stroll through the city at night and admired the beautiful skyline.',
     ),
     Post(
       username: 'historybuff',
-      imagePath: "assets/job8.jpg",
+      imagePath: "assets/job7.jpg",
       title: 'Exploring Ancient Ruins',
       content:
       'Visited some ancient ruins today and learned about the fascinating history behind them.',
