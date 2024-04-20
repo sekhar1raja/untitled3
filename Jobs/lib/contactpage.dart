@@ -14,6 +14,9 @@ class ApplyNowPage extends StatelessWidget {
     String? firstName;
     String? lastName;
     String? email;
+    String? phoneNumber;
+    String? address;
+    String? resume;
 
     return Scaffold(
       appBar: AppBar(
@@ -97,6 +100,63 @@ class ApplyNowPage extends StatelessWidget {
                     ),
                   ),
                 ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your phone number';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    phoneNumber = value;
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Phone Number',
+                    labelStyle: const TextStyle(color: Colors.blueGrey),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your address';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    address = value;
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Address',
+                    labelStyle: const TextStyle(color: Colors.blueGrey),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please upload your resume';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    resume = value;
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Resume',
+                    labelStyle: const TextStyle(color: Colors.blueGrey),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
@@ -142,3 +202,4 @@ class ApplyNowPage extends StatelessWidget {
     );
   }
 }
+
