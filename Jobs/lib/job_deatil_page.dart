@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'Job.dart';
-import 'contactpage.dart'; // Import the Job class
+import 'contactpage.dart';
 
 class JobDetailPage extends StatelessWidget {
   final Job job;
@@ -19,7 +19,7 @@ class JobDetailPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Hero(
-              tag: job.id, // Unique identifier for the hero animation
+              tag: job.id,
               child: SizedBox(
                 height: 200,
                 child: Image.asset(

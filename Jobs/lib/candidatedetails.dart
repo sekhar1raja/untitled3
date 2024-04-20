@@ -28,7 +28,7 @@ class Candidate {
   final String salary;
   final String category;
   final List<String> skills;
-  bool isConnected; // New property
+  bool isConnected;
 
   Candidate({
     required this.name,
@@ -38,7 +38,7 @@ class Candidate {
     required this.salary,
     required this.category,
     required this.skills,
-    this.isConnected = false, // Default value
+    this.isConnected = false,
   });
 }
 class Data extends ChangeNotifier {
@@ -301,7 +301,6 @@ class _CandidateDetailPageState extends State<CandidateDetailPage> {
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                // Toggle the isConnected property
                 setState(() {
                   widget.candidate.isConnected = !widget.candidate.isConnected;
                 });

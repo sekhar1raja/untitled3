@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'Job.dart';
 import 'allPost.dart';
-import 'candidatedetails.dart'; // Assuming CandidateListPage is defined in candidatedetails.dart
+import 'candidatedetails.dart';
 import 'job_deatil_page.dart';
 
 void main() => runApp(const MyApp());
@@ -25,34 +25,79 @@ class MyApp extends StatelessWidget {
   }
 }
 
+
+
+class Post {
+  final String username;
+  final String title;
+  final String content;
+  final String imagePath;
+
+  Post({
+    required this.username,
+    required this.title,
+    required this.content,
+    required this.imagePath,
+  });
+}
+
 class Data extends ChangeNotifier {
   List<dynamic> posts = [
-    Job(
-      id: '7',
-      title: 'Web Developer',
-      location: 'Remote',
-      description: 'Looking for a skilled web developer to join our team.',
-      photo: 'assets/job1.jpg.jpg',
-      salary: 85000,
+    Post(
+      username: 'user123',
+      imagePath: "assets/job1.jpg",
+      title: 'Exploring the Grand Canyon',
+      content:
+      'Had an amazing time hiking through the Grand Canyon. The views were breathtaking!',
     ),
-    Job(
-      id: '8',
-      title: 'Html Developer',
-      location: 'Remote',
-      description: 'Looking for a skilled Frontedn developer to join our team.',
-      photo: 'assets/job1.jpg.jpg',
-      salary: 85000,
+    Post(
+      username: 'foodlover',
+      imagePath: "assets/job2.jpg",
+      title: 'Delicious Food Festival',
+      content:
+      'Attended a food festival today and tried some incredible dishes from around the world.',
     ),
-
-    Feed(
-      title: 'Lifeguard- job post',
-      description: 'H2O Lifeguard and Recreation Management',
-      candidateId: '2',
+    Post(
+      username: 'beachbum',
+      imagePath: "assets/job3.jpg",
+      title: 'Beach Day',
+      content:
+      'Spent the day relaxing on the beach, soaking up the sun and listening to the sound of the waves.',
     ),
-    Feed(
-      title: 'Looking for Roommate',
-      description: 'I am looking for a roommate to share my apartment.',
-      candidateId: '3',
+    Post(
+      username: 'adventurer',
+      imagePath: "assets/job4.jpg",
+      title: 'Road Trip Adventure',
+      content:
+      'Embarked on an epic road trip with friends, exploring new cities and making unforgettable memories.',
+    ),
+    Post(
+      username: 'hiker123',
+      imagePath: "assets/job5.jpg",
+      title: 'Mountain Hiking',
+      content:
+      'Conquered a challenging mountain trail today. The view from the summit was absolutely worth it!',
+    ),
+    Post(
+      username: 'naturelover',
+      imagePath: "assets/job6.jpg",
+      title: 'Camping Under the Stars',
+      content:
+      'Spent the night camping under the stars. Nothing beats the feeling of being surrounded by nature.',
+    ),
+    Post(
+      username: 'cityexplorer',
+      imagePath: "assets/job7.jpg",
+      title: 'City Skyline',
+      content:
+      'Took a stroll through the city at night and admired the beautiful skyline.',
+    ),
+    Post(
+      username: 'historybuff',
+      imagePath: "assets/job8.jpg",
+      title: 'Exploring Ancient Ruins',
+      content:
+      'Visited some ancient ruins today and learned about the fascinating history behind them.',
     ),
 
 
@@ -154,7 +199,7 @@ final List<Job> jobs = [
 
     salary: 95000,
 
-  ), // Add other jobs here...
+  ),
 
 ];
 
@@ -244,15 +289,43 @@ class PostsTab extends StatelessWidget {
       itemCount: data.posts.length,
       itemBuilder: (context, index) {
         final post = data.posts[index];
-        if (post is Job) {
-          return ListTile(
-            title: Text(post.title),
-            subtitle: Text(post.description),
-          );
-        } else if (post is Feed) {
-          return ListTile(
-            title: Text(post.title),
-            subtitle: Text(post.description),
+        if (post is Post) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Card(
+              elevation: 3,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CircleAvatar(
+                      radius: 20,
+                      backgroundImage: AssetImage(post.imagePath),
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            post.username,
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 5),
+                          Text(
+                            post.title,
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 5),
+                          Text(post.content),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           );
         }
         return SizedBox.shrink();
@@ -260,6 +333,8 @@ class PostsTab extends StatelessWidget {
     );
   }
 }
+
+
 
 class JobDetailsTab extends StatelessWidget {
   const JobDetailsTab({Key? key});
