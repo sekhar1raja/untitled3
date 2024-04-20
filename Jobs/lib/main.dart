@@ -229,7 +229,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Find Job'),
+        title: const Text('Flutter  job Application'),
         actions: [
           IconButton(
             icon: const Icon(Icons.person),
