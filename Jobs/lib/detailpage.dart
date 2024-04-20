@@ -18,7 +18,7 @@ class JobDetailPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Hero(
-              tag: job.id, // Unique identifier for the hero animation
+              tag: job.id,
               child: SizedBox(
                 height: 200,
                 child: Image.asset(

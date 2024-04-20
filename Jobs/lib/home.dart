@@ -12,7 +12,6 @@ class ConnectPage extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Search functionality (you can replace this with your own search UI)
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
@@ -23,12 +22,10 @@ class ConnectPage extends StatelessWidget {
               ),
             ),
           ),
-          // List of candidates (you can replace this with your candidate list UI)
           Expanded(
             child: ListView.builder(
-              itemCount: 3, // Example: replace with actual candidate data
+              itemCount: 3,
               itemBuilder: (context, index) {
-                // Example candidate tile
                 return ListTile(
                   title: Text('Candidate Name'),
                   subtitle: Text('Job Title, Location'),
@@ -49,7 +46,6 @@ class ConnectPage extends StatelessWidget {
   }
 }
 
-// Example candidate profile page
 class CandidateProfile extends StatelessWidget {
   const CandidateProfile({super.key});
 

@@ -27,49 +27,35 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, dynamic> _formData = {};
 
-  String? _message;
-
   void saveForm(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       final data = Provider.of<Data>(context, listen: false);
       if (selectedOption == 0) {
-        // Add job to the list
         Job newJob = Job(
           title: _formData['title'],
           location: _formData['location'],
           description: _formData['description'],
           photo: _formData['photo'],
           salary: _formData['salary'],
-          id: '', // Assuming you have a field to store the ID of the job
+          id: '',
         );
-        data.posts.add(newJob); // Add newJob to the posts list
-        setState(() {
-          _message = "Job added";
-        });
-        Future.delayed(Duration(seconds: 2), () {
-          setState(() {
-            _message = null;
-          });
-        });
-        Navigator.pop(context); // Go back to the previous screen
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Added Job")),
+        );
+        data.posts.add(newJob);
+        Navigator.pop(context);
       } else {
-        // Add feed to the list
         Feed newFeed = Feed(
           title: _formData['title'],
           description: _formData['description'],
           candidateId: '1',
         );
-        data.posts.add(newFeed); // Add newFeed to the posts list
-        setState(() {
-          _message = "Feed added";
-        });
-        Future.delayed(Duration(seconds: 0), () {
-          setState(() {
-            _message = "form sumbitted";
-          });
-        });
-        Navigator.pop(context); // Go back to the previous screen
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Added Feed")),
+        );
+        data.posts.add(newFeed);
+        Navigator.pop(context);
       }
     }
   }
@@ -212,7 +198,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 ),
               ],
               ElevatedButton(
-                onPressed: () => saveForm(context), // Pass context to saveForm
+                onPressed: () => saveForm(context),
                 child: const Text('ADD'),
               ),
               const SizedBox(height: 20),
