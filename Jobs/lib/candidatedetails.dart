@@ -311,14 +311,7 @@ class _CandidateDetailPageState extends State<CandidateDetailPage> {
               },
               child: Text(widget.candidate.isConnected ? 'Disconnect' : 'Connect'),
             ),
-            SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: () {
 
-              },
-              icon: Icon(Icons.bolt),
-              label: Text('Post'),
-            ),
           ],
         ),
       ),

@@ -27,6 +27,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, dynamic> _formData = {};
 
+  String? _message;
+
   void saveForm(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
@@ -41,10 +43,15 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           salary: _formData['salary'],
           id: '', // Assuming you have a field to store the ID of the job
         );
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Added Job")),
-        );
         data.posts.add(newJob); // Add newJob to the posts list
+        setState(() {
+          _message = "Job added";
+        });
+        Future.delayed(Duration(seconds: 2), () {
+          setState(() {
+            _message = null;
+          });
+        });
         Navigator.pop(context); // Go back to the previous screen
       } else {
         // Add feed to the list
@@ -53,10 +60,15 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           description: _formData['description'],
           candidateId: '1',
         );
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Added Feed")),
-        );
         data.posts.add(newFeed); // Add newFeed to the posts list
+        setState(() {
+          _message = "Feed added";
+        });
+        Future.delayed(Duration(seconds: 0), () {
+          setState(() {
+            _message = "form sumbitted";
+          });
+        });
         Navigator.pop(context); // Go back to the previous screen
       }
     }
