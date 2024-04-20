@@ -1,5 +1,5 @@
 class Job {
-  final String id;
+  final String id; // Add id field
   final String title;
   final String location;
   final String description;

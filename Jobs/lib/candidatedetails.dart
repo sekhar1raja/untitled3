@@ -189,39 +189,41 @@ class CandidateCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: AssetImage(candidate.photo),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+              // Image
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                    image: AssetImage(candidate.photo),
+                    fit: BoxFit.cover,
                   ),
-                ],
+                ),
               ),
+              SizedBox(width: 16), // Add space between image and text
               Expanded(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        candidate.name,
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        'Location: ${candidate.location}',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title
+                    Text(
+                      candidate.name,
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 8),
+                    // Location
+                    Text(
+                      'Location: ${candidate.location}',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    SizedBox(height: 8),
+                    // Icon graph (Placeholder)
+                    Icon(
+                      Icons.graphic_eq, // Choose your desired icon
+                      color: Colors.green, // Set color to green
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -231,6 +233,7 @@ class CandidateCard extends StatelessWidget {
     );
   }
 }
+
 
 class CandidateDetailPage extends StatefulWidget {
   final Candidate candidate;
@@ -307,14 +310,7 @@ class _CandidateDetailPageState extends State<CandidateDetailPage> {
               },
               child: Text(widget.candidate.isConnected ? 'Disconnect' : 'Connect'),
             ),
-            SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: () {
 
-              },
-              icon: Icon(Icons.bolt),
-              label: Text('Post'),
-            ),
           ],
         ),
       ),
