@@ -170,8 +170,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   static const List<Widget> _widgetOptions = <Widget>[
     const PostsTab(),
-    CreatePost(),
-    JobDetailsTab(),
+    const CreatePost(),
+    const JobDetailsTab(),
   ];
 
   void _onItemTapped(int index) {
@@ -186,8 +186,9 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('Find Job'),
         actions: [
-          GestureDetector(
-            onTap: () {
+          IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -195,17 +196,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
             },
-            child: IconButton(
-              icon: Icon(Icons.person),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CandidateListPage(title: ''),
-                  ),
-                );
-              },
-            ),
           ),
         ],
       ),
@@ -271,8 +261,17 @@ class JobDetailsTab extends StatelessWidget {
       itemBuilder: (context, index) {
         final job = jobs[index];
         return ListTile(
+          leading: CircleAvatar(
+            backgroundImage: AssetImage(job.photo), // Use 'photo' instead of 'image'
+          ),
           title: Text(job.title),
-
+          subtitle: Row(
+            children: [
+              Icon(Icons.location_on, size: 18, color: Colors.grey),
+              SizedBox(width: 4),
+              Text(job.location),
+            ],
+          ),
           onTap: () {
             Navigator.push(
               context,
@@ -347,23 +346,6 @@ class CreatePost extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class CandidateDetailScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Candidate Detail'),
-      ),
-      body: Center(
-        child: Text(
-          'Candidate Detail Screen',
-          style: TextStyle(fontSize: 24),
-        ),
       ),
     );
   }
